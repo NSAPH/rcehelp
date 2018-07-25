@@ -98,7 +98,7 @@ add_var <- function(variable, category) {
 #' @return
 #' @export
 #'
-#' @importFrom stringr string_wrap
+#' @importFrom stringr str_wrap
 yes <- function(prompt) {
   done <- F
   while (!done) {

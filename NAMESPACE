@@ -3,4 +3,4 @@
 export(add_var)
 export(make_readme)
 export(yes)
-importFrom(stringr,string_wrap)
+importFrom(stringr,str_wrap)

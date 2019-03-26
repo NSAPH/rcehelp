@@ -23,26 +23,31 @@ large_unique <- function(path, var) {
   return(out)
 }
 
-#' Generate frequency tables for two datasets
+#' Generate frequency tables for a column in a dataset
 #'
 #'
 #'
 #'
 #' @export
-large_freq <- function(f1, f2, col1, col2 = NULL) {
-  if (is.null(col2)) {
-    col2 <- col1
-  }
-  f1 <- LaF::laf_open(LaF::detect_dm_csv(f1, header = T), ignore_failed_conversion = T)
-  f2 <- LaF::laf_open(LaF::detect_dm_csv(f2, header = T), ignore_failed_conversion = T)
-
-  freq1 <- colfreq(f1, which(names(f1) == col1))
-  freq2 <- colfreq(f1, which(names(f2) == col2))
-
+large_freq <- function(path, col) {
+  dataset <- LaF::laf_open(LaF::detect_dm_csv(path, header = T), ignore_failed_conversion = T)
+  begin(dataset)
   out <- list()
-  out[[1]] <- freq1
-  out[[2]] <- freq2
-
+  while(TRUE) {
+    n <- next_block(dataset)
+    if (nrow(n) == 0) {
+      break
+    }
+    freqs <- table(n[[col]])
+    for (val in names(freqs)) {
+      if (is.null(out[[val]])) {
+        out[[val]] <- unname(freqs[val])
+      } else{
+        out[[val]] <- out[[val]] + unname(freqs[val])
+      }
+    }
+  }
+  class(out) <- "large_freq"
   return(out)
 }
 
@@ -64,6 +69,7 @@ large_summary <- function(path, display = T) {
   # 3 = string, 2 = category/factor, 1 = integer, 0 = double
   out <- list()
   for (var in names(dataset)) {
+    #print(var)
     out[[var]] <- list()
     indx <- which(names(dataset) == var)
     out[[var]]$nmissing <- unname(colnmissing(dataset, indx))
@@ -85,14 +91,14 @@ large_summary <- function(path, display = T) {
       ## process factor
       out[[var]]$class <- "categorical"
       out[[var]]$unique_vals <- length(large_unique(path, var))
-      var_freq <- colfreq(dataset, indx)
-      out[[var]]$mode <- names(which(var_freq == max(var_freq)))
+      var_freq <- large_freq(path, var)
+      out[[var]]$mode <- max(var_freq)
     } else if (dataset@column_types[indx] == 3) {
       ## process string
       out[[var]]$class <- "string"
       out[[var]]$unique_vals <- length(large_unique(path, var))
-      var_freq <- colfreq(dataset, indx)
-      out[[var]]$mode <- names(which(var_freq == max(var_freq)))
+      var_freq <- large_freq(path, var)
+      out[[var]]$mode <- max(var_freq)
     }
   }
   class(out) <- "large_summary"
@@ -138,4 +144,21 @@ print.large_summary <- function(x) {
   for (var in names(out)) {
     cat(out[[var]])
   }
+}
+
+
+#' Return the most common value from a large file frequency table
+#'
+#'
+#' @export
+max.large_freq <- function(frq, ...) {
+  out <- names(frq)[1]
+  max_val <- frq[[out]]
+  for (val in names(frq)) {
+    if (frq[[val]] > max_val) {
+      max_val <- frq[[val]]
+      out <- val
+    }
+  }
+  return(out)
 }

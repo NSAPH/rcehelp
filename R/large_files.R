@@ -63,13 +63,15 @@ large_freq <- function(path, col) {
 #'
 #' @export
 #'
-large_summary <- function(path, display = T) {
+large_summary <- function(path, display = T, verbose = F) {
   dataset <- LaF::laf_open(LaF::detect_dm_csv(path, header = T), ignore_failed_conversion = T)
   ### LAF Column tyoes
   # 3 = string, 2 = category/factor, 1 = integer, 0 = double
   out <- list()
   for (var in names(dataset)) {
-    #print(var)
+    if (verbose) {
+      message('processing ', var)
+    }
     out[[var]] <- list()
     indx <- which(names(dataset) == var)
     out[[var]]$nmissing <- unname(colnmissing(dataset, indx))

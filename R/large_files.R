@@ -9,11 +9,11 @@
 #' @import LaF
 #' @export
 large_unique <- function(path, var) {
-  dataset <- LaF::laf_open(LaF::detect_dm_csv(path, header = T), ignore_failed_conversion = T) #handle missing data
+  dataset <- LaF::laf_open(LaF::detect_dm_csv(path, header = T, sample = T), ignore_failed_conversion = T) #handle missing data
   begin(dataset)
   out <- NULL
   while(TRUE) {
-    n <- next_block(dataset)
+    n <- next_block(dataset, nrows = 20000)
     if (nrow(n) == 0) {
       break
     }
@@ -30,11 +30,11 @@ large_unique <- function(path, var) {
 #'
 #' @export
 large_freq <- function(path, col) {
-  dataset <- LaF::laf_open(LaF::detect_dm_csv(path, header = T), ignore_failed_conversion = T)
+  dataset <- LaF::laf_open(LaF::detect_dm_csv(path, header = T, sample = T), ignore_failed_conversion = T)
   begin(dataset)
   out <- list()
   while(TRUE) {
-    n <- next_block(dataset)
+    n <- next_block(dataset, nrows = 20000)
     if (nrow(n) == 0) {
       break
     }
@@ -64,7 +64,7 @@ large_freq <- function(path, col) {
 #' @export
 #'
 large_summary <- function(path, display = T, verbose = F) {
-  dataset <- LaF::laf_open(LaF::detect_dm_csv(path, header = T), ignore_failed_conversion = T)
+  dataset <- LaF::laf_open(LaF::detect_dm_csv(path, header = T, sample = T), ignore_failed_conversion = T)
   ### LAF Column tyoes
   # 3 = string, 2 = category/factor, 1 = integer, 0 = double
   out <- list()

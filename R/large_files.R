@@ -13,7 +13,7 @@ large_unique <- function(path, var) {
   begin(dataset)
   out <- NULL
   while(TRUE) {
-    n <- next_block(dataset, nrows = 100000)
+    n <- next_block(dataset, nrows = 1000000)
     if (nrow(n) == 0) {
       break
     }
@@ -34,7 +34,7 @@ large_freq <- function(path, col) {
   begin(dataset)
   out <- list()
   while(TRUE) {
-    n <- next_block(dataset, nrows = 100000)
+    n <- next_block(dataset, nrows = 1000000)
     if (nrow(n) == 0) {
       break
     }

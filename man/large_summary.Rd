@@ -4,7 +4,7 @@
 \alias{large_summary}
 \title{Generate and Print summary statistics for a dataset that can't be held in memory}
 \usage{
-large_summary(path, display = T)
+large_summary(path, display = T, verbose = F)
 }
 \arguments{
 \item{path}{path to a csv file representing a dataframe}

@@ -1,6 +1,12 @@
 
-
-
+#' Reverse a vector of strings
+#'
+#' @param str A vector of strings to be reversed
+#'
+#' @return a character vector
+reverse_string <- function(str) {
+  return(sapply(lapply(strsplit(str, NULL), rev), paste, collapse=""))
+}
 
 #' Create skeleton for RCE readme
 #'

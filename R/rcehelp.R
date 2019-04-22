@@ -4,6 +4,7 @@
 #' @param str A vector of strings to be reversed
 #'
 #' @return a character vector
+#' @export
 reverse_string <- function(str) {
   return(sapply(lapply(strsplit(str, NULL), rev), paste, collapse=""))
 }
